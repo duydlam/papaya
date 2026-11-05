@@ -177,7 +177,7 @@ jobs:
           set -eu
           ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
             -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
-            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl -n prod rollout status deployment/papaya-api --timeout=180s'
+            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl -n prod rollout status deployment/papaya-api --timeout=600s'
 
       - name: Wait for web rollout
         env:
@@ -187,4 +187,4 @@ jobs:
           set -eu
           ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
             -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
-            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl -n prod rollout status deployment/papaya-web --timeout=180s'
+            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl -n prod rollout status deployment/papaya-web --timeout=600s'
