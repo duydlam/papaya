@@ -1,0 +1,8 @@
+packages:
+  - apps/*
+pmOnFail: error
+overrides:
+  multer: ^2.5.0
+allowBuilds:
+  nx: true
+  '@parcel/watcher': true

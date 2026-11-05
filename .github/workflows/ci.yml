@@ -1,0 +1,93 @@
+name: CI
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.28.4
+          run_install: false
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run format:check
+      - run: pnpm exec nx run-many -t lint,test,build
+
+  publish:
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'master'
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        app: [api, web]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate public API URL
+        if: matrix.app == 'web'
+        env:
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'https://papaya.waterbase.io.vn' }}
+        run: test -n "$NEXT_PUBLIC_API_URL"
+      - name: Set image name
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}-${{ matrix.app }}" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: true
+          build-args: |
+            APP=${{ matrix.app }}
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL || 'https://papaya.waterbase.io.vn' }}
+          tags: |
+            ${{ steps.image.outputs.name }}:${{ github.sha }}
+            ${{ steps.image.outputs.name }}:latest
+
+  deploy:
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'master'
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to K3s
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+          DEPLOY_SHA: ${{ github.sha }}
+        run: |
+          set -eu
+          test -n "$VPS_HOST" && test -n "$VPS_USER" && test -n "$VPS_SSH_KEY"
+          test -n "$VPS_KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+          IMAGE_PREFIX="ghcr.io/${GITHUB_REPOSITORY,,}"
+          mkdir -p "$RUNNER_TEMP/papaya-k8s"
+          sed -e "s|__IMAGE_PREFIX__|$IMAGE_PREFIX|g" -e "s|__IMAGE_TAG__|$DEPLOY_SHA|g" \
+            k8s/papaya.yml > "$RUNNER_TEMP/papaya-k8s/papaya.yml"
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
+            'mkdir -p /opt/papaya/k8s'
+          scp -o BatchMode=yes -i ~/.ssh/id_ed25519 \
+            "$RUNNER_TEMP/papaya-k8s/papaya.yml" "$VPS_USER@$VPS_HOST:/opt/papaya/k8s/papaya.yml"
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
+            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl apply -f /opt/papaya/k8s/papaya.yml && kubectl -n prod rollout status deployment/papaya-api --timeout=180s && kubectl -n prod rollout status deployment/papaya-web --timeout=180s'

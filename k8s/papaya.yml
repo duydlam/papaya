@@ -1,0 +1,167 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: papaya-api
+  namespace: prod
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: papaya-api
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: papaya-api
+  template:
+    metadata:
+      labels:
+        app: papaya-api
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: papaya
+        vault.hashicorp.com/agent-inject-secret-app-env: secret/data/prod/papaya
+        vault.hashicorp.com/agent-inject-template-app-env: |
+          {{ with secret "secret/data/prod/papaya" }}
+          DB_HOST:{{ .Data.data.DB_HOST | base64Encode }}
+          DB_PORT:{{ .Data.data.DB_PORT | base64Encode }}
+          DB_USER:{{ .Data.data.DB_USER | base64Encode }}
+          DB_PASSWORD:{{ .Data.data.DB_PASSWORD | base64Encode }}
+          DB_NAME:{{ .Data.data.DB_NAME | base64Encode }}
+          DB_SCHEMA:{{ .Data.data.DB_SCHEMA | base64Encode }}
+          DB_SYNC:{{ .Data.data.DB_SYNC | base64Encode }}
+          REDIS_HOST:{{ .Data.data.REDIS_HOST | base64Encode }}
+          REDIS_PORT:{{ .Data.data.REDIS_PORT | base64Encode }}
+          REDIS_PASSWORD:{{ .Data.data.REDIS_PASSWORD | base64Encode }}
+          REDIS_DB:{{ .Data.data.REDIS_DB | base64Encode }}
+          JWT_SECRET:{{ .Data.data.JWT_SECRET | base64Encode }}
+          DEMO_USERNAME:{{ .Data.data.DEMO_USERNAME | base64Encode }}
+          DEMO_PASSWORD:{{ .Data.data.DEMO_PASSWORD | base64Encode }}
+          NODE_ENV:{{ .Data.data.NODE_ENV | base64Encode }}
+          PORT:{{ .Data.data.PORT | base64Encode }}
+          WEB_ORIGIN:{{ .Data.data.WEB_ORIGIN | base64Encode }}
+          {{ end }}
+    spec:
+      serviceAccountName: papaya-api
+      imagePullSecrets:
+        - name: ghcr-pull
+      containers:
+        - name: papaya-api
+          image: __IMAGE_PREFIX__-api:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          command: [sh, -c]
+          args:
+            - |
+              while IFS=: read -r key encoded; do
+                [ -n "$key" ] || continue
+                export "$key=$(printf '%s' "$encoded" | base64 -d)"
+              done < /vault/secrets/app-env
+              exec node dist/apps/api/main.js
+          ports:
+            - name: http
+              containerPort: 3001
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: papaya-api
+  namespace: prod
+spec:
+  selector:
+    app: papaya-api
+  ports:
+    - name: http
+      port: 3001
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: papaya-web
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: papaya-web
+  template:
+    metadata:
+      labels:
+        app: papaya-web
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      containers:
+        - name: papaya-web
+          image: __IMAGE_PREFIX__-web:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: papaya-web
+  namespace: prod
+spec:
+  selector:
+    app: papaya-web
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: papaya
+  namespace: prod
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: papaya.waterbase.io.vn
+      http:
+        paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: papaya-api
+                port:
+                  number: 3001
+          - path: /helloworld
+            pathType: Prefix
+            backend:
+              service:
+                name: papaya-api
+                port:
+                  number: 3001
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: papaya-web
+                port:
+                  number: 3000

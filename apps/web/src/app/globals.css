@@ -1,0 +1,171 @@
+@import 'tailwindcss';
+:root {
+  color-scheme: light;
+  --ink: #182620;
+  --muted: #66756d;
+  --line: #e1e9e4;
+  --green: #20785a;
+  --wash: #f5f8f6;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--wash);
+  color: var(--ink);
+  font:
+    15px/1.5 Arial,
+    sans-serif;
+}
+button,
+input {
+  font: inherit;
+}
+button {
+  border: 0;
+  border-radius: 8px;
+  background: var(--green);
+  color: white;
+  padding: 10px 15px;
+  font-weight: 650;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.shell {
+  width: min(760px, calc(100% - 32px));
+  margin: 72px auto;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 34px;
+}
+h1 {
+  margin: 0;
+  font-size: 42px;
+  letter-spacing: -1.8px;
+}
+h2 {
+  margin: 0;
+  font-size: 18px;
+}
+p {
+  margin-top: 8px;
+}
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+.muted,
+time,
+.section-title span,
+small {
+  color: var(--muted);
+}
+.panel {
+  padding: 22px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 6px 24px #173c2810;
+}
+.login {
+  max-width: 420px;
+  display: grid;
+  gap: 15px;
+}
+label {
+  display: grid;
+  gap: 7px;
+  font-weight: 600;
+}
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline-color: var(--green);
+}
+.row {
+  display: flex;
+  gap: 10px;
+}
+.row input {
+  flex: 1;
+}
+.composer > label {
+  margin-bottom: 9px;
+}
+.entries {
+  margin-top: 34px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.entry {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--line);
+}
+.entry p {
+  margin: 0 0 5px;
+  font-weight: 600;
+}
+time,
+small {
+  font-size: 12px;
+}
+.actions {
+  display: flex;
+  gap: 7px;
+}
+.quiet,
+.danger {
+  background: transparent;
+  color: var(--green);
+  padding: 8px 10px;
+}
+.danger {
+  color: #b43c3c;
+}
+.empty {
+  padding: 30px;
+  text-align: center;
+  border: 1px dashed #cbd8d0;
+  border-radius: 12px;
+  color: var(--muted);
+}
+.error {
+  padding: 12px 14px;
+  color: #a22;
+  background: #fff1f1;
+  border-radius: 8px;
+}
+@media (max-width: 540px) {
+  .shell {
+    margin: 40px auto;
+  }
+  h1 {
+    font-size: 34px;
+  }
+  .row {
+    flex-direction: column;
+  }
+  .entry {
+    align-items: flex-start;
+  }
+}
