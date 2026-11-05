@@ -11,7 +11,9 @@
     },
     "start": {
       "executor": "nx:run-commands",
-      "options": { "command": "node dist/apps/api/main.js" }
+      "options": {
+        "command": "NODE_PATH=$PWD/apps/api/node_modules node dist/apps/api/main.js"
+      }
     },
     "serve": {
       "executor": "nx:run-commands",

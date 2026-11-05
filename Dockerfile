@@ -13,7 +13,7 @@ RUN pnpm exec nx run ${APP}:build
 
 FROM node:22-alpine
 WORKDIR /app
-ENV NODE_ENV=production
+ENV NODE_ENV=production NODE_PATH=/app/apps/api/node_modules
 COPY --from=build /app ./
 ARG APP=api
 ENV APP=${APP}
