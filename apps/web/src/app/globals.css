@@ -77,11 +77,6 @@ small {
   border-radius: 14px;
   box-shadow: 0 6px 24px #173c2810;
 }
-.login {
-  max-width: 420px;
-  display: grid;
-  gap: 15px;
-}
 label {
   display: grid;
   gap: 7px;

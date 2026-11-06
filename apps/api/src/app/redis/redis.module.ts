@@ -1,45 +1,47 @@
 import {
-  Global,
+  Inject,
   Injectable,
   Module,
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import { EnvironmentConfig } from '../config/environment-config.interface';
+import { REDIS_CLIENT, RedisService } from './redis.service';
 
-export const REDIS = 'REDIS';
 @Injectable()
 class RedisConnection implements OnModuleInit, OnModuleDestroy {
-  constructor(private readonly redis: Redis) {}
-  async onModuleInit() {
+  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
+
+  async onModuleInit(): Promise<void> {
     await this.redis.connect();
   }
-  async onModuleDestroy() {
+
+  async onModuleDestroy(): Promise<void> {
     await this.redis.quit();
   }
 }
 
-@Global()
 @Module({
+  imports: [ConfigModule],
   providers: [
     {
-      provide: REDIS,
-      useFactory: () =>
+      provide: REDIS_CLIENT,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<EnvironmentConfig>) =>
         new Redis({
-          host: process.env.REDIS_HOST ?? 'localhost',
-          port: Number(process.env.REDIS_PORT ?? 6379),
-          password: process.env.REDIS_PASSWORD || undefined,
-          db: Number(process.env.REDIS_DB ?? 0),
+          host: config.get('REDIS_HOST') ?? 'localhost',
+          port: Number(config.get('REDIS_PORT') ?? 6379),
+          password: config.get('REDIS_PASSWORD') || undefined,
+          db: Number(config.get('REDIS_DB') ?? 0),
           lazyConnect: true,
           maxRetriesPerRequest: 1,
         }),
     },
-    {
-      provide: RedisConnection,
-      useFactory: (redis: Redis) => new RedisConnection(redis),
-      inject: [REDIS],
-    },
+    RedisConnection,
+    RedisService,
   ],
-  exports: [REDIS],
+  exports: [RedisService],
 })
 export class RedisModule {}

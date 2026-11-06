@@ -8,9 +8,8 @@ export function HelloWorldApp() {
   const [token, setToken] = useState('');
   const [items, setItems] = useState<HelloWorld[]>([]);
   const [message, setMessage] = useState('');
-  const [username, setUsername] = useState('papaya');
-  const [password, setPassword] = useState('papaya');
   const [error, setError] = useState('');
+  const [starting, setStarting] = useState(true);
 
   const request = useCallback(
     async (path: string, init: RequestInit = {}) => {
@@ -32,10 +31,25 @@ export function HelloWorldApp() {
     async () => setItems(await request('/helloworld')),
     [request],
   );
-  useEffect(() => {
-    const saved = localStorage.getItem(TOKEN_KEY);
-    if (saved) setToken(saved);
+  const startSession = useCallback(async () => {
+    setError('');
+    setStarting(true);
+    try {
+      const response = await fetch(`${API_URL}/auth/demo`, { method: 'POST' });
+      if (!response.ok) throw new Error(`Request failed (${response.status})`);
+      const result = await response.json();
+      localStorage.setItem(TOKEN_KEY, result.accessToken);
+      setToken(result.accessToken);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not start a session');
+    } finally {
+      setStarting(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void startSession();
+  }, [startSession]);
   useEffect(() => {
     if (token) {
       localStorage.setItem(TOKEN_KEY, token);
@@ -43,19 +57,6 @@ export function HelloWorldApp() {
     }
   }, [token, refresh]);
 
-  async function login(event: FormEvent) {
-    event.preventDefault();
-    setError('');
-    try {
-      const result = await request('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ username, password }),
-      });
-      setToken(result.accessToken);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Login failed');
-    }
-  }
   async function create(event: FormEvent) {
     event.preventDefault();
     setError('');
@@ -91,12 +92,6 @@ export function HelloWorldApp() {
       setError(e instanceof Error ? e.message : 'Delete failed');
     }
   }
-  function logout() {
-    localStorage.removeItem(TOKEN_KEY);
-    setToken('');
-    setItems([]);
-  }
-
   return (
     <main className="shell">
       <header>
@@ -105,11 +100,6 @@ export function HelloWorldApp() {
           <h1>Hello, world.</h1>
           <p className="muted">A small full stack CRUD flow, ready to grow.</p>
         </div>
-        {token && (
-          <button className="quiet" onClick={logout}>
-            Sign out
-          </button>
-        )}
       </header>
       {error && (
         <p role="alert" className="error">
@@ -117,26 +107,14 @@ export function HelloWorldApp() {
         </p>
       )}
       {!token ? (
-        <form className="panel login" onSubmit={login}>
-          <h2>Sign in</h2>
-          <label>
-            Username
-            <input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          <button>Continue</button>
-          <small>Local demo credentials: papaya / papaya</small>
-        </form>
+        <section className="panel">
+          <p>
+            {starting ? 'Starting your demo session…' : 'Could not connect.'}
+          </p>
+          {!starting && (
+            <button onClick={() => void startSession()}>Retry</button>
+          )}
+        </section>
       ) : (
         <>
           <form className="panel composer" onSubmit={create}>

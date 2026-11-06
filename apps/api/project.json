@@ -23,7 +23,7 @@
     },
     "lint": {
       "executor": "nx:run-commands",
-      "options": { "command": "eslint apps/api/src" }
+      "options": { "command": "eslint apps/api/src apps/api/tests" }
     },
     "test": {
       "executor": "nx:run-commands",

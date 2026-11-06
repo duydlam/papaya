@@ -1,12 +1,17 @@
 import 'reflect-metadata';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { EnvironmentConfig } from './app/config/environment-config.interface';
 import { HttpExceptionFilter } from './app/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({ origin: process.env.WEB_ORIGIN ?? 'http://localhost:3000' });
+  const config = app.get<ConfigService<EnvironmentConfig>>(ConfigService);
+  app.enableCors({
+    origin: config.get('WEB_ORIGIN') ?? 'http://localhost:3000',
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -15,6 +20,6 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(Number(config.get('PORT') ?? 3001));
 }
 void bootstrap();

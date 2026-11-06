@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { NotFoundException } from '@nestjs/common';
-import { HelloWorldService } from './helloworld.service';
+import { HelloWorldService } from '../src/app/helloworld/helloworld.service';
 
 describe('HelloWorldService', () => {
   const repository = {

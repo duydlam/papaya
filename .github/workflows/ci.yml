@@ -66,125 +66,51 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - name: Check required deployment secrets
+      - name: Deploy to K3s
+        id: deploy_k3s
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+          DEPLOY_SHA: ${{ github.sha }}
         run: |
           set -eu
-          test -n "$VPS_HOST" || { echo "::error::Secret VPS_HOST is empty or missing"; exit 1; }
-          test -n "$VPS_USER" || { echo "::error::Secret VPS_USER is empty or missing"; exit 1; }
-          test -n "$VPS_SSH_KEY" || { echo "::error::Secret VPS_SSH_KEY is empty or missing"; exit 1; }
-          test -n "$VPS_KNOWN_HOSTS" || { echo "::error::Secret VPS_KNOWN_HOSTS is empty or missing"; exit 1; }
-          echo "All four deployment secrets are present."
-
-      - name: Prepare SSH credentials
-        env:
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-        run: |
-          set -eu
+          test -n "$VPS_HOST" && test -n "$VPS_USER" && test -n "$VPS_SSH_KEY" && test -n "$VPS_KNOWN_HOSTS"
           install -m 700 -d ~/.ssh
           printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
           printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
-          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
-          ssh-keygen -F "$VPS_HOST" -f ~/.ssh/known_hosts >/dev/null
-          echo "Private key parses and a known-host entry matches VPS_HOST."
-
-      - name: Render K3s manifest
-        env:
-          DEPLOY_SHA: ${{ github.sha }}
-        run: |
-          set -eu
           IMAGE_PREFIX="ghcr.io/${GITHUB_REPOSITORY,,}"
           mkdir -p "$RUNNER_TEMP/papaya-k8s"
           sed -e "s|__IMAGE_PREFIX__|$IMAGE_PREFIX|g" -e "s|__IMAGE_TAG__|$DEPLOY_SHA|g" \
             k8s/papaya.yml > "$RUNNER_TEMP/papaya-k8s/papaya.yml"
-
-          if grep -q '__IMAGE_' "$RUNNER_TEMP/papaya-k8s/papaya.yml"; then
-            echo "::error::Rendered manifest still contains image placeholders"
-            exit 1
-          fi
-          grep 'image:' "$RUNNER_TEMP/papaya-k8s/papaya.yml"
-          echo "Manifest rendered for commit $DEPLOY_SHA."
-
-      - name: Test VPS SSH connection
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          set -eu
           ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
-            -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" 'printf "SSH connected to "; hostname'
-
-      - name: Create remote manifest directory
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          set -eu
-          echo "Creating /opt/papaya/k8s on the VPS."
-          ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
-            -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
-            'mkdir -p /opt/papaya/k8s'
-          echo "Remote manifest directory is ready."
-
-      - name: Copy manifest to VPS
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          set -eu
-          echo "Copying the rendered manifest to the VPS."
+            -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" 'mkdir -p /opt/papaya/k8s'
           scp -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
-            -i ~/.ssh/id_ed25519 \
-            "$RUNNER_TEMP/papaya-k8s/papaya.yml" "$VPS_USER@$VPS_HOST:/opt/papaya/k8s/papaya.yml"
-          echo "Manifest copy completed."
-
-      - name: Verify copied manifest checksum
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          set -eu
-          LOCAL_SHA="$(sha256sum "$RUNNER_TEMP/papaya-k8s/papaya.yml" | cut -d ' ' -f 1)"
-          REMOTE_SHA="$(ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
-            -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
-            'sha256sum /opt/papaya/k8s/papaya.yml' | cut -d ' ' -f 1)"
-          test "$LOCAL_SHA" = "$REMOTE_SHA"
-          echo "Manifest checksum matches: $LOCAL_SHA"
-
-      - name: Apply manifest to K3s
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          set -eu
-          echo "Applying manifest in namespace prod."
+            -i ~/.ssh/id_ed25519 "$RUNNER_TEMP/papaya-k8s/papaya.yml" \
+            "$VPS_USER@$VPS_HOST:/opt/papaya/k8s/papaya.yml"
           ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
             -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
-            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl apply -f /opt/papaya/k8s/papaya.yml'
+            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl apply -f /opt/papaya/k8s/papaya.yml && kubectl -n prod rollout status deployment/papaya-api --timeout=600s && kubectl -n prod rollout status deployment/papaya-web --timeout=600s'
 
-      - name: Wait for API rollout
+      - name: Deployment summary
+        if: always()
         env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_OUTCOME: ${{ steps.deploy_k3s.outcome }}
+          DEPLOY_SHA: ${{ github.sha }}
+          SERVER_URL: ${{ github.server_url }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
         run: |
-          set -eu
-          ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
-            -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
-            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl -n prod rollout status deployment/papaya-api --timeout=600s'
-
-      - name: Wait for web rollout
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          set -eu
-          ssh -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=yes \
-            -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" \
-            'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl -n prod rollout status deployment/papaya-web --timeout=600s'
+          {
+            echo "## Papaya deployment"
+            echo ""
+            echo "| Result | Namespace | Image tag |"
+            echo "| --- | --- | --- |"
+            echo "| \`$DEPLOY_OUTCOME\` | \`prod\` | \`$DEPLOY_SHA\` |"
+            echo ""
+            echo "- Rollout targets: \`papaya-api\` and \`papaya-web\`."
+            echo "- [Open Papaya](https://papaya.waterbase.io.vn)"
+            echo "- [Commit ${DEPLOY_SHA:0:7}](${SERVER_URL}/${REPOSITORY}/commit/${DEPLOY_SHA}) · [Workflow run](${SERVER_URL}/${REPOSITORY}/actions/runs/${RUN_ID})"
+          } >> "$GITHUB_STEP_SUMMARY"

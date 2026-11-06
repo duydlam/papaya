@@ -1,7 +1,7 @@
 export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/src'],
+  roots: ['<rootDir>/tests'],
   testRegex: '.*\\.spec\\.ts$',
   moduleFileExtensions: ['ts', 'js'],
   transform: {
