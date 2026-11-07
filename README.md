@@ -97,3 +97,28 @@ Product scope and business rules are documented in [`requirements/AI_Challenge_1
 
 - Model: Luna 6
   https://chatgpt.com/s/cx_6aef47254c248191a60b533d6f329f9a
+
+## Demo
+- Create tenant
+<img width="1345" height="164" alt="Screenshot 2026-11-07 at 22 47 31" src="https://github.com/user-attachments/assets/2094a3a9-7b9c-41c6-b804-0c498f2b4beb" />
+<img width="978" height="537" alt="Screenshot 2026-11-07 at 22 47 42" src="https://github.com/user-attachments/assets/6efdbb82-c0c8-4bf7-8071-c6363ebc8d77" />
+<img width="1023" height="887" alt="Screenshot 2026-11-07 at 22 47 50" src="https://github.com/user-attachments/assets/cd8a88e8-b643-4c26-bb50-a50750349a8f" />
+<img width="993" height="842" alt="Screenshot 2026-11-07 at 22 48 06" src="https://github.com/user-attachments/assets/3f251d7d-5208-4135-afc5-d9897d93fa9b" />
+<img width="975" height="1286" alt="Screenshot 2026-11-07 at 22 48 23" src="https://github.com/user-attachments/assets/eb51034b-ab53-4bf1-aa37-14a9bca1055a" />
+<img width="974" height="1220" alt="Screenshot 2026-11-07 at 22 48 28" src="https://github.com/user-attachments/assets/7bd3f68f-59f3-4d2a-80f5-448231a32205" />
+<img width="967" height="1152" alt="Screenshot 2026-11-07 at 22 48 35" src="https://github.com/user-attachments/assets/4d3f3598-6b1a-4e06-9a6c-286b81a4b649" />
+<img width="971" height="1184" alt="Screenshot 2026-11-07 at 22 48 43" src="https://github.com/user-attachments/assets/f2cd648d-cf06-4420-9bdf-47d18206f323" />
+<img width="952" height="400" alt="Screenshot 2026-11-07 at 22 48 47" src="https://github.com/user-attachments/assets/ec7a618b-fd24-44bc-89b3-5239ee52216a" />
+<img width="986" height="937" alt="Screenshot 2026-11-07 at 22 48 51" src="https://github.com/user-attachments/assets/5440d20b-1229-4294-92e6-0f53706ede16" />
+<img width="986" height="937" alt="Screenshot 2026-11-07 at 22 48 51" src="https://github.com/user-attachments/assets/92b04985-e65b-451d-9f95-0113abebc17f" />
+<img width="988" height="965" alt="Screenshot 2026-11-07 at 22 50 36" src="https://github.com/user-attachments/assets/5964c5fa-d948-47ba-ad42-1ef14a7972a1" />
+
+- View pagination tenant
+<img width="1324" height="1040" alt="Screenshot 2026-11-07 at 22 50 57" src="https://github.com/user-attachments/assets/be5d7a0c-50dc-4c2f-aaeb-2acf471a3617" />
+
+- Claim preview
+<img width="1323" height="767" alt="Screenshot 2026-11-07 at 22 51 59" src="https://github.com/user-attachments/assets/e91ed762-e08f-4904-bdbd-ce7aab0b5168" />
+
+- Compare tenants
+<img width="1341" height="807" alt="Screenshot 2026-11-07 at 22 52 30" src="https://github.com/user-attachments/assets/5e6bfc85-5899-4715-a4e4-a14d05cfde21" />
+
