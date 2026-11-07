@@ -92,3 +92,8 @@ Cloudflare Tunnel `waterbase-k3s` routes `papaya.waterbase.io.vn` through Traefi
 ## Requirements
 
 Product scope and business rules are documented in [`requirements/AI_Challenge_15.prd`](requirements/AI_Challenge_15.prd). The implementation plan is in [`requirements/planning/AI_Challenge_15_plan.md`](requirements/planning/AI_Challenge_15_plan.md).
+
+## Link CODEX conversation
+
+- Model: Luna 6
+  https://chatgpt.com/s/cx_6aef47254c248191a60b533d6f329f9a
