@@ -1,15 +1,18 @@
 import type { Metadata } from 'next';
+import { PortalLayout } from '@/components/portal-layout';
 import './globals.css';
 export const metadata: Metadata = {
-  title: 'Papaya',
-  description: 'Papaya monorepo starter',
+  title: 'Papaya | Tenant configuration',
+  description: 'Configure insurance partners and preview claims.',
 };
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <PortalLayout>{children}</PortalLayout>
+      </body>
     </html>
   );
 }

@@ -1,6 +1,9 @@
 {
   "name": "@papaya/api",
   "private": true,
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@nestjs/common": "^11.1.0",
     "@nestjs/config": "^4.0.0",
@@ -8,10 +11,12 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^11.1.0",
     "@nestjs/typeorm": "^11.0.0",
+    "@papaya/contracts": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "ioredis": "^5.7.0",
     "lodash": "^4.17.21",
+    "moment": "^2.31.0",
     "multer": "^2.5.0",
     "pg": "^8.16.0",
     "reflect-metadata": "^0.2.2",
@@ -19,6 +24,7 @@
     "typeorm": "^0.3.27"
   },
   "devDependencies": {
-    "@jest/globals": "30.5.2"
+    "@jest/globals": "30.5.2",
+    "@types/lodash": "^4.17.27"
   }
 }

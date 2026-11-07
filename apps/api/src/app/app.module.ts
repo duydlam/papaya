@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
-import { HelloWorldModule } from './helloworld/helloworld.module';
 import { RedisModule } from './redis/redis.module';
+import { TenantModule } from './tenants/tenant.module';
+import { ClaimProcessingModule } from './claim-processing/claim-processing.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: 'apps/api/.env' }),
     DatabaseModule,
     RedisModule,
-    AuthModule,
-    HelloWorldModule,
+    TenantModule,
+    ClaimProcessingModule,
   ],
 })
 export class AppModule {}

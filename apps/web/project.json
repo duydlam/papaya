@@ -7,9 +7,9 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pnpm --filter @papaya/web exec next build --no-lint"
+        "command": "NEXT_DIST_DIR=.next-production pnpm --filter @papaya/web exec next build --no-lint"
       },
-      "outputs": ["{workspaceRoot}/apps/web/.next"]
+      "outputs": ["{workspaceRoot}/apps/web/.next-production"]
     },
     "serve": {
       "executor": "nx:run-commands",

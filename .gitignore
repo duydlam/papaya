@@ -1,8 +1,11 @@
 node_modules
 .next
+.next-production
 dist
 coverage
 **/.env
 **/.env.*
 !**/.env.example
 .nx/
+requirements
+tsconfig.tsbuildinfo

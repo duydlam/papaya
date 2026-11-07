@@ -1,5 +1,6 @@
 packages:
   - apps/*
+  - packages/*
 pmOnFail: error
 overrides:
   multer: ^2.5.0

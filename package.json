@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev": "nx run-many -t serve -p api web --parallel=2",
     "lint": "nx run-many -t lint",
     "test": "nx run-many -t test",
     "format": "prettier --write \"apps/**/*.{ts,tsx,json,css,mjs}\" \".vscode/*.json\" \".github/**/*.{yml,yaml}\" \"k8s/**/*.{yml,yaml}\" \"*.{json,yml,yaml,mjs,cjs}\" README.md",

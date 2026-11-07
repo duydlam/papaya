@@ -24,7 +24,8 @@
     "next-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next-production/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

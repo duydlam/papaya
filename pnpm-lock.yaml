@@ -297,6 +297,9 @@ importers:
       '@nestjs/typeorm':
         specifier: ^11.0.0
         version: 11.0.3(@nestjs/common@11.2.8(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.8)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.31(ioredis@5.11.1(supports-color@8.1.1))(pg@8.23.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@22.20.5)(typescript@5.9.3)))
+      '@papaya/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -309,6 +312,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.18.1
+      moment:
+        specifier: ^2.31.0
+        version: 2.31.0
       multer:
         specifier: ^2.5.0
         version: 2.5.0
@@ -328,18 +334,30 @@ importers:
       '@jest/globals':
         specifier: 30.5.2
         version: 30.5.2(supports-color@8.1.1)
+      '@types/lodash':
+        specifier: ^4.17.27
+        version: 4.17.27
 
   apps/web:
     dependencies:
+      '@papaya/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      lodash:
+        specifier: ^4.18.1
+        version: 4.18.1
       lucide-react:
         specifier: ^0.468.0
         version: 0.468.0(react@19.2.6)
+      moment:
+        specifier: ^2.31.0
+        version: 2.31.0
       next:
         specifier: 15.5.29
         version: 15.5.29(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@22.20.5)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -353,12 +371,17 @@ importers:
         specifier: ^3.3.1
         version: 3.7.0
     devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.27
+        version: 4.17.27
       '@types/react':
         specifier: ^19.0.0
         version: 19.3.0
       '@types/react-dom':
         specifier: ^19.0.0
         version: 19.3.0(@types/react@19.3.0)
+
+  packages/contracts: {}
 
 packages:
   '@alloc/quick-lru@5.3.0':
@@ -2203,6 +2226,12 @@ packages:
     resolution:
       {
         integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==,
+      }
+
+  '@types/lodash@4.17.27':
+    resolution:
+      {
+        integrity: sha512-VenMRv/eKNrspX9v3H4dbmjsrnCOYdYBG3kxXKk3dG6X+urBGcj2Prww3xw1U5K4FV/mE4h5GbWd0szEKf+9ew==,
       }
 
   '@types/ms@2.1.0':
@@ -5259,6 +5288,12 @@ packages:
     engines: { node: '>=10' }
     hasBin: true
 
+  moment@2.31.0:
+    resolution:
+      {
+        integrity: sha512-0acOTfMiWOheYS4eoWb80yYMb/JLvVv9SHbs2PehaDzfUG0Bw855SKyk0IKTnPGa5+U2bmi3W68l1+sGLX/pvw==,
+      }
+
   ms@2.1.3:
     resolution:
       {
@@ -8166,6 +8201,8 @@ snapshots:
       '@types/ms': 2.1.0
       '@types/node': 22.20.5
 
+  '@types/lodash@4.17.27': {}
+
   '@types/ms@2.1.0': {}
 
   '@types/node@22.20.5':
@@ -10095,6 +10132,8 @@ snapshots:
   minipass@7.1.3: {}
 
   mkdirp@1.0.4: {}
+
+  moment@2.31.0: {}
 
   ms@2.1.3: {}
 

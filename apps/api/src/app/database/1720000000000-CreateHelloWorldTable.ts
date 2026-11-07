@@ -27,6 +27,7 @@ export class CreateHelloWorldTable1720000000000 implements MigrationInterface {
           },
         ],
       }),
+      true,
     );
   }
 

@@ -1,0 +1,210 @@
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 34px;
+}
+.stat-card,
+.panel,
+.tenant-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.stat-card {
+  padding: 15px 18px;
+}
+.stat-card span {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.9px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.stat-card strong {
+  font-size: 18px;
+  display: block;
+  margin-top: 8px;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 16px;
+}
+.section-heading h2 {
+  font-size: 17px;
+  margin: 0;
+}
+.section-heading p {
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+.tenant-grid {
+  display: grid;
+  gap: 12px;
+}
+.tenant-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 20px;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+.tenant-card:hover {
+  border-color: #cbd9ce;
+  box-shadow: 0 8px 22px rgb(28 54 39 / 5%);
+  transform: translateY(-1px);
+}
+.tenant-mark {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  font-size: 20px;
+  font-weight: 700;
+  background: #e9f4eb;
+  color: #39805a;
+}
+.mark-1 {
+  background: #eaf0fb;
+  color: #4a68a7;
+}
+.mark-2 {
+  background: #f8efe2;
+  color: #ac7430;
+}
+.tenant-main {
+  min-width: 0;
+  flex: 1;
+}
+.tenant-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.tenant-title h3 {
+  font-size: 15px;
+  margin: 0;
+}
+.tenant-main p {
+  margin: 5px 0 9px;
+  font-size: 14px;
+}
+.pill {
+  display: inline-flex;
+  border-radius: 20px;
+  background: #f1f4f2;
+  color: #617068;
+  padding: 2px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.chip {
+  background: #f1f5f2;
+  border: 1px solid #e0e8e2;
+  color: #52645a;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 650;
+  letter-spacing: 0.1px;
+}
+.chip-outpatient {
+  background: #eaf5ee;
+  border-color: #d5eadc;
+  color: #28714e;
+}
+.chip-inpatient {
+  background: #eaf1fb;
+  border-color: #d8e4f5;
+  color: #426599;
+}
+.chip-dental {
+  background: #fff4e6;
+  border-color: #f4e2c8;
+  color: #946326;
+}
+.chip-maternity {
+  background: #fff0f2;
+  border-color: #f2d9df;
+  color: #a4495c;
+}
+.chip-optical {
+  background: #f2efff;
+  border-color: #e0daf8;
+  color: #6553a3;
+}
+.tenant-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tenant-actions .button {
+  padding: 8px 10px;
+  font-size: 14px;
+}
+.icon-action {
+  width: 38px;
+  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid #e5ebe6;
+  border-radius: 9px;
+  background: #fff;
+  color: #65746b;
+  transition:
+    color 140ms ease,
+    background 140ms ease,
+    border-color 140ms ease;
+}
+.icon-action:hover {
+  color: var(--green-dark);
+  background: #f0f7f2;
+  border-color: #d4e5d8;
+}
+.archive-action:hover {
+  color: #a33b43;
+  background: #fff3f3;
+  border-color: #f1d7d9;
+}
+.directory-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.tenant-search {
+  display: flex;
+  width: min(100%, 430px);
+  gap: 8px;
+}
+.tenant-search input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #dce4de;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 9px 11px;
+  outline-color: var(--green);
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}

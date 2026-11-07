@@ -6,19 +6,21 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
-      "options": { "command": "tsc -p apps/api/tsconfig.app.json" },
+      "options": {
+        "command": "rm -rf apps/api/dist dist/apps/api && pnpm exec tsc -p apps/api/tsconfig.app.json && pnpm --filter @papaya/api deploy --prod dist/apps/api && test -f dist/apps/api/dist/main.js && test -f dist/apps/api/node_modules/@papaya/contracts/index.js"
+      },
       "outputs": ["{workspaceRoot}/dist/apps/api"]
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "NODE_PATH=$PWD/apps/api/node_modules node dist/apps/api/main.js"
+        "command": "node dist/apps/api/dist/main.js"
       }
     },
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register apps/api/src/main.ts"
+        "command": "ts-node-dev --project apps/api/tsconfig.app.json --respawn --transpile-only -r tsconfig-paths/register apps/api/src/main.ts"
       }
     },
     "lint": {

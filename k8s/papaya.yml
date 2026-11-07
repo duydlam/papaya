@@ -30,14 +30,10 @@ spec:
           DB_PASSWORD:{{ .Data.data.DB_PASSWORD | base64Encode }}
           DB_NAME:{{ .Data.data.DB_NAME | base64Encode }}
           DB_SCHEMA:{{ .Data.data.DB_SCHEMA | base64Encode }}
-          DB_SYNC:{{ .Data.data.DB_SYNC | base64Encode }}
           REDIS_HOST:{{ .Data.data.REDIS_HOST | base64Encode }}
           REDIS_PORT:{{ .Data.data.REDIS_PORT | base64Encode }}
           REDIS_PASSWORD:{{ .Data.data.REDIS_PASSWORD | base64Encode }}
           REDIS_DB:{{ .Data.data.REDIS_DB | base64Encode }}
-          JWT_SECRET:{{ .Data.data.JWT_SECRET | base64Encode }}
-          DEMO_USERNAME:{{ .Data.data.DEMO_USERNAME | base64Encode }}
-          DEMO_PASSWORD:{{ .Data.data.DEMO_PASSWORD | base64Encode }}
           NODE_ENV:{{ .Data.data.NODE_ENV | base64Encode }}
           PORT:{{ .Data.data.PORT | base64Encode }}
           WEB_ORIGIN:{{ .Data.data.WEB_ORIGIN | base64Encode }}
@@ -57,7 +53,7 @@ spec:
                 [ -n "$key" ] || continue
                 export "$key=$(printf '%s' "$encoded" | base64 -d)"
               done < /vault/secrets/app-env
-              exec node dist/apps/api/main.js
+              exec node dist/apps/api/dist/main.js
           ports:
             - name: http
               containerPort: 3001
@@ -144,14 +140,14 @@ spec:
     - host: papaya.waterbase.io.vn
       http:
         paths:
-          - path: /auth
+          - path: /tenants
             pathType: Prefix
             backend:
               service:
                 name: papaya-api
                 port:
                   number: 3001
-          - path: /helloworld
+          - path: /claims
             pathType: Prefix
             backend:
               service:

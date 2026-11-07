@@ -1,0 +1,118 @@
+.error {
+  position: relative;
+  padding: 12px 42px 12px 14px;
+  margin-bottom: 20px;
+  background: #fff0ef;
+  border: 1px solid #f3cfca;
+  border-radius: 8px;
+  color: #992f28;
+  font-size: 15px;
+}
+.dismiss {
+  position: absolute;
+  right: 12px;
+  top: 6px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 22px;
+}
+.workbench {
+  display: grid;
+  grid-template-columns: minmax(320px, 440px) minmax(340px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.claim-form {
+  display: grid;
+  gap: 16px;
+}
+.claim-inputs {
+  display: grid;
+  min-width: 0;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.claim-form .field-row {
+  grid-template-columns: 1fr 1fr;
+}
+.claim-form .form-footer {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.claim-form .hint {
+  margin: -8px 0 0;
+}
+.custom-fields {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  display: grid;
+  gap: 14px;
+}
+.custom-fields h3 {
+  font-size: 15px;
+  margin: 0;
+}
+.result-column {
+  min-width: 0;
+}
+.empty-result {
+  text-align: center;
+  padding: 54px 28px;
+}
+.result-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--soft);
+  color: var(--green);
+  font-size: 20px;
+}
+.empty-result .result-icon {
+  margin: 0 auto 14px;
+}
+.empty-result h2 {
+  font-size: 17px;
+  margin: 0;
+}
+.empty-result p {
+  font-size: 14px;
+}
+.result-card h2 {
+  font-size: 21px;
+  margin: 0;
+}
+.result-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.result-card > p {
+  color: #5b6b61;
+}
+.result-line {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) 1.4fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.result-line span {
+  color: var(--muted);
+}
+.result-line strong {
+  font-weight: 650;
+}
+.mock-status {
+  background: #f1f7f1;
+  border-radius: 7px;
+  padding: 10px;
+  color: var(--green-dark) !important;
+  font-size: 13px;
+}
