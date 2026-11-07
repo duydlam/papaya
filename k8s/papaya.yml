@@ -140,14 +140,7 @@ spec:
     - host: papaya.waterbase.io.vn
       http:
         paths:
-          - path: /tenants
-            pathType: Prefix
-            backend:
-              service:
-                name: papaya-api
-                port:
-                  number: 3001
-          - path: /claims
+          - path: /api
             pathType: Prefix
             backend:
               service:

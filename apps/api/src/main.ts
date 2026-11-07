@@ -9,6 +9,7 @@ import { ApiResponseInterceptor } from './app/api-response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api');
   const config = app.get<ConfigService<EnvironmentConfig>>(ConfigService);
   app.enableCors({
     origin: config.get('WEB_ORIGIN') ?? 'http://localhost:3000',
